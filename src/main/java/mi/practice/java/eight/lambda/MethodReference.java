@@ -95,6 +95,10 @@ public class MethodReference {
 }
 
 class Apple extends Fruit {
+    private int weight;
+    private String color;
+    private int country;
+
     public Apple() {
         this.weight = 0;
     }
@@ -108,9 +112,6 @@ class Apple extends Fruit {
         this.color = color;
     }
 
-    private int weight;
-    private String color;
-
     public Integer getWeight() {
         return weight;
     }
@@ -118,6 +119,22 @@ class Apple extends Fruit {
     @Override
     public String toString() {
         return "Apple:" + weight;
+    }
+
+    public int getCountry() {
+        return country;
+    }
+
+    public void setCountry(int country) {
+        this.country = country;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
     }
 }
 
