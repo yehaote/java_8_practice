@@ -102,6 +102,116 @@ public class StreamDemo {
                 .limit(3)
                 .count();
         System.out.println(count);
+
+        List<Dish> vegetarianDishes = new ArrayList<>();
+        for (Dish d : menu) {
+            if (d.isVegetarian()) {
+                vegetarianDishes.add(d);
+            }
+        }
+        vegetarianDishes = menu.stream()
+                .filter(Dish::isVegetarian)
+                .collect(Collectors.toList());
+
+        /** filtering and slicing **/
+        List<Integer> numbers = Arrays.asList(1, 2, 1, 3, 3, 2, 4);
+        numbers.stream()
+                .filter((i) -> i % 2 == 0)
+                .distinct()
+                .forEach(System.out::println);
+
+        List<Dish> dishes = menu.stream()
+                .filter(d -> d.getCalories() > 300)
+                .limit(3)
+                .collect(Collectors.toList());
+
+        dishes = menu.stream()
+                .filter(d -> d.getCalories() > 300)
+                .skip(2)
+                .collect(Collectors.toList());
+
+        dishes = menu.stream()
+                .filter(d -> d.getType().equals(Dish.Type.MEAT))
+                .limit(2)
+                .collect(Collectors.toList());
+
+        /** mapping **/
+        List<String> dishNames = menu.stream()
+                .map(Dish::getName)
+                .collect(Collectors.toList());
+
+        List<String> words = Arrays.asList("Java8", "Lambdas", "In", "Action");
+        List<Integer> wordLengths = words.stream()
+                .map(String::length)
+                .collect(Collectors.toList());
+        System.out.println(wordLengths);
+
+        List<Integer> dishNameLengths = menu.stream()
+                .map(Dish::getName)
+                .map(String::length)
+                .collect(Collectors.toList());
+        System.out.println(dishNameLengths);
+
+        words = Arrays.asList("Hello", "World");
+        /* The result of map is List<String[]>
+        List<String> uniqueCharacters = words.stream()
+                .map(w->w.split(""))
+                .distinct()
+                .collect(Collectors.toList());
+        System.out.println(uniqueCharacters);*/
+
+        String[] arrayOfWords = { "Hello", "World" };
+        Stream<String> streamOfWords = Arrays.stream(arrayOfWords);
+
+        List<String> uniqueCharacters = words.stream()
+                .map(w -> w.split(""))
+                .flatMap(Arrays::stream)
+                .distinct()
+                .collect(Collectors.toList());
+        System.out.println(uniqueCharacters);
+
+        /**
+         * The flatMap() operation has the effect of applying a one-to-many
+         * transformation to the elements of the stream, and then flattening the
+         * resulting elements into a new stream.
+         */
+
+        numbers = Arrays.asList(1, 2, 3, 4, 5);
+        List<Integer> squareNumbers = numbers.stream()
+                .map(num -> num * num)
+                .collect(Collectors.toList());
+        System.out.println(squareNumbers);
+
+        List<Integer> numberList1 = Arrays.asList(1, 2, 3);
+        List<Integer> numberList2 = Arrays.asList(3, 4);
+        List<Integer[]> pairs = numberList1.stream()
+                .flatMap(num -> numberList2.stream()
+                        .map(num2 -> new Integer[] { num, num2 }))
+                .collect(Collectors.toList());
+        pairs.forEach(pair -> System.out.println("[" + pair[0] + ", " + pair[1] + "]"));
+        System.out.println();
+
+        List<Integer[]> sumThree = numberList1.stream()
+                .flatMap(num -> numberList2.stream()
+                        .filter(num2 -> (num + num2) % 3 == 0)
+                        .map(num2 -> new Integer[] { num, num2 }))
+                .collect(Collectors.toList());
+        sumThree.forEach(pair -> System.out.println("[" + pair[0] + ", " + pair[1] + "]"));
+
+        /** finding and matching **/
+        // Is there an element match predicate?
+        if (menu.stream().anyMatch(Dish::isVegetarian)) {
+            System.out.println("The menu is (somewhat) vegetarian friendly!!");
+        }
+        // Is all match?
+        boolean isHealthy = menu.stream()
+                .allMatch(d -> d.getCalories() < 1000);
+        // no element match
+        isHealthy = menu.stream()
+                .noneMatch(d -> d.getCalories() >= 1000);
+        Optional<Dish> dish = menu.stream()
+                .filter(Dish::isVegetarian)
+                .findAny();
     }
 }
 
