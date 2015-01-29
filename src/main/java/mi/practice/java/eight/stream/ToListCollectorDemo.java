@@ -1,9 +1,6 @@
 package mi.practice.java.eight.stream;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
@@ -67,9 +64,15 @@ class ToListCollector<T> implements Collector<T, List<T>, List<T>> {
         return () -> new ArrayList<>();
     }
 
+    /**
+     * Add data to accumulator
+     *
+     * @return
+     */
     @Override
     public BiConsumer<List<T>, T> accumulator() {
-        return (list, value) -> list.add(value);
+        // return (list, value) -> list.add(value);
+        return List::add;
     }
 
     @Override
@@ -80,19 +83,21 @@ class ToListCollector<T> implements Collector<T, List<T>, List<T>> {
         };
     }
 
-    @Override
-    public Function<List<T>, List<T>> finisher() {
-        return (list) -> list;
-    }
-
     /**
-     * Returns a {@code Set} of {@code Collector.Characteristics} indicating
-     * the characteristics of this Collector.  This set should be immutable.
+     * convert accumulator to result
      *
-     * @return an immutable set of collector characteristics
+     * @return
      */
     @Override
+    public Function<List<T>, List<T>> finisher() {
+        //return (list) -> list;
+        return Function.identity();
+    }
+
+    @Override
     public Set<Characteristics> characteristics() {
-        return null;
+        return Collections.unmodifiableSet(
+                EnumSet.of(Characteristics.IDENTITY_FINISH, Characteristics.CONCURRENT)
+        );
     }
 }

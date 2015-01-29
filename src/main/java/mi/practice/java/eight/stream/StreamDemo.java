@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.function.IntSupplier;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -498,7 +499,21 @@ public class StreamDemo {
                 Collectors.partitioningBy((Dish d) -> d.getCalories() > 500)));
         menu.stream().collect(Collectors.partitioningBy(Dish::isVegetarian,
                 Collectors.counting()));
+        // use custom collector
+        dishes = menu.stream()
+                .collect(new ToListCollector<>());
+        System.out.println(dishes);
 
+        dishes = menu.stream()
+                .collect(
+                        ArrayList::new,
+                        List::add,
+                        List::addAll);
+
+        System.out.println(partitionPrimes(100));
+
+        menu.stream().filter(Dish::isVegetarian);
+        menu.parallelStream().filter(Dish::isVegetarian);
     }
 
     public static boolean isPrime(int candidate) {
@@ -507,7 +522,7 @@ public class StreamDemo {
                 .noneMatch(i -> candidate % i == 0);
     }
 
-    public Map<Boolean, List<Integer>> partitionPrimes(int n) {
+    public static Map<Boolean, List<Integer>> partitionPrimes(int n) {
         return IntStream.rangeClosed(2, n).boxed()
                 .collect(
                         Collectors.partitioningBy(candidate -> isPrime(candidate)));
