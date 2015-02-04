@@ -6,7 +6,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.function.IntSupplier;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -478,6 +477,10 @@ public class StreamDemo {
                                     }
                                 },
                                 Collectors.toCollection(HashSet::new))));
+        caloricLevelsByType =
+                menu.stream().collect(
+                        Collectors.groupingBy(Dish::getType, Collectors.mapping(
+                                Dish::getCaloricLevel, Collectors.toCollection(HashSet::new))));
         System.out.println(caloricLevelsByType);
         // partitioning
         Map<Boolean, List<Dish>> partitionedMenu = menu.stream()
@@ -565,6 +568,16 @@ class Dish {
 
     enum Type {
         MEAT, FISH, OTHER
+    }
+
+    public CaloricLevel getCaloricLevel() {
+        if (calories <= 400) {
+            return CaloricLevel.DIET;
+        } else if (calories <= 700) {
+            return CaloricLevel.NORMAL;
+        } else {
+            return CaloricLevel.FAT;
+        }
     }
 }
 
